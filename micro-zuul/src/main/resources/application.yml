@@ -1,0 +1,36 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: micro-zuul
+
+server:
+  port: 8901
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8900/eureka/
+
+feign:
+  hystrix:
+    enabled: true
+
+#如果Zuul使用服务发现，则需要使用
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
+
+zuul:
+  routes:
+    workserver:
+      path: /workserver/**
+      serviceId: micro-workserver
+      sensitiveHeaders:
+    workclient:
+      path: /workclient/**
+      serviceId: micro-workclient
+    micro-auth:
+      path: /auth/**
+      serviceId: micro-auth
+      sensitiveHeaders:
