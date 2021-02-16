@@ -22,9 +22,11 @@ public class AuthServiceIpml implements IAuthService {
     static {
         // 模拟数据库假数据
         List<Role> roleList = new ArrayList<Role>();
-        roleList.add(new Role(1, "USER"));
-        roleList.add(new Role(1, "ADMIN"));
+        roleList.add(new Role(1, "ROLE_USER", "/test/hello")); // 角色需要添加ROLE_ 前缀，在security框架里判断hasRole，则不需要添加ROLE_前缀
+        roleList.add(new Role(2, "ROLE_ADMIN", "/test/hi"));
+        roleList.add(new Role(3, "ROLE_ADMIN", "/test/getPrinciple"));
         List<Role> roleList2 = new ArrayList<Role>();
+        roleList2.add(new Role(1,"ROLE_USER", "/test/hello"));
         userList.add(new User(0, "刘德华", "123456", roleList));
         userList.add(new User(0, "谢霆锋", "111111", roleList));
         userList.add(new User(0, "吴彦祖", "222222", roleList2));

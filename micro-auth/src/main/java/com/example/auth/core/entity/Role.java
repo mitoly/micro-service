@@ -5,10 +5,12 @@ import org.springframework.security.core.GrantedAuthority;
 public class Role implements GrantedAuthority {
     private Integer id;
     private String name;
+    private String permissionUri;
 
-    public Role(Integer id, String name) {
+    public Role(Integer id, String name, String permissionUri) {
         this.id = id;
         this.name = name;
+        this.permissionUri = permissionUri;
     }
 
     public Integer getId() {
@@ -27,8 +29,17 @@ public class Role implements GrantedAuthority {
         this.name = name;
     }
 
+    public String getPermissionUri() {
+        return permissionUri;
+    }
+
+    public void setPermissionUri(String permissionUri) {
+        this.permissionUri = permissionUri;
+    }
+
     @Override
     public String getAuthority() {
-        return getName();
+//        return getName();
+        return getPermissionUri();
     }
 }

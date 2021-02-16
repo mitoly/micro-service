@@ -3,7 +3,6 @@ package com.example.workserver.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +27,8 @@ public class HiController {
     }
 
     //需要ADMIN权限，可以解析token中的Authority
-    @PreAuthorize("hasAuthority('ADMIN')")
+    //使用@PreAuthorize注解需要在WebSecurity开启@EnableGlobalMethodSecurity(prePostEnabled = true)
+//    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping("/hello")
     public String hello (){
         return "hello you!";
@@ -38,6 +38,9 @@ public class HiController {
     @GetMapping("/getPrinciple")
     public OAuth2Authentication getPrinciple(OAuth2Authentication oAuth2Authentication, Principal principal,
                                              Authentication authentication){
+        // 通过上下文获得用户数据
+//        SecurityContext context = SecurityContextHolder.getContext();
+
         logger.info(oAuth2Authentication.getUserAuthentication().getAuthorities().toString());
         logger.info(oAuth2Authentication.toString());
         logger.info("principal.toString()"+principal.toString());

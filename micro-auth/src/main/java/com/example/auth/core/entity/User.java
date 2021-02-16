@@ -1,10 +1,8 @@
 package com.example.auth.core.entity;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -58,12 +56,12 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> auths = new ArrayList<GrantedAuthority>();
-        List<Role> roles = this.getRoles();
-        for (Role role : roles) {
-            auths.add(new SimpleGrantedAuthority(role.getAuthority()));
-        }
-        return auths;
+//        List<GrantedAuthority> auths = new ArrayList<GrantedAuthority>();
+//        List<Role> roles = this.getRoles();
+//        for (Role role : roles) {
+//            auths.add(new SimpleGrantedAuthority(role.getAuthority()));
+//        }
+        return roles;
     }
 
     @Override

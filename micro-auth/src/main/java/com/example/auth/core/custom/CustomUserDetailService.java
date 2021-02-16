@@ -1,17 +1,12 @@
 package com.example.auth.core.custom;
 
-import com.example.auth.core.entity.Role;
 import com.example.auth.core.entity.User;
 import com.example.auth.core.service.IAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 用户信息，实现SpringSecurity用户类的规范
@@ -27,13 +22,7 @@ public class CustomUserDetailService implements UserDetailsService {
         User user = authService.getUserByName(username); // 目前伪代码
         if (null == user) {
             throw new UsernameNotFoundException("用户不存在！");
-        } else {
-            List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
-            //用于添加用户的权限。只要把用户权限添加到authorities 就万事大吉。可在其它微服务配置权限访问
-            for(Role role:user.getRoles()){
-                authorities.add(new SimpleGrantedAuthority(role.getAuthority()));
-            }
-            return user;
         }
+        return user;
     }
 }

@@ -1,11 +1,9 @@
 package com.example.auth.core.config;
 
 import com.example.auth.core.custom.CustomClientDetailsService;
-import com.example.auth.core.custom.CustomTokenEnhancer;
 import com.example.auth.core.custom.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -15,7 +13,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
@@ -42,17 +39,15 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     @Qualifier("authenticationManagerBean")
     private AuthenticationManager authenticationManager;
 
-//    @Bean
-//    RedisTokenStore redisTokenStore(){
-//        return new RedisTokenStore(redisConnectionFactory);
-//    }
+    @Autowired
+    private JwtTokenStore jwtTokenStore;
 
-    //token存储数据库
-//    @Bean
-//    public JdbcTokenStore jdbcTokenStore(){
-//        return new JdbcTokenStore(dataSource);
-//    }
+    @Autowired
+    @Qualifier("accessTokenConverter")
+    private JwtAccessTokenConverter jwtAccessTokenConverter;
 
+    @Autowired
+    private TokenEnhancer tokenEnhancer;
 
     @Autowired
     private CustomClientDetailsService customClientDetailsService;
@@ -78,10 +73,10 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), accessTokenConverter()));
+        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer, jwtAccessTokenConverter));
 
         endpoints
-                .tokenStore(tokenStore())
+                .tokenStore(jwtTokenStore)
                 .tokenEnhancer(tokenEnhancerChain)
                 .authenticationManager(authenticationManager) //WebSecurity配置好的
                 .userDetailsService(customUserDetailService); //读取用户的验证信息
@@ -97,22 +92,7 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
                 .allowFormAuthenticationForClients();
     }
 
-    @Bean
-    public TokenStore tokenStore() {
-        return new JwtTokenStore(accessTokenConverter());
-    }
 
-    @Bean
-    public JwtAccessTokenConverter accessTokenConverter() {
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setSigningKey("key"); // 对称加密，在资源管理类中需要配置一样的key
-        return converter;
-    }
-
-    @Bean
-    public TokenEnhancer tokenEnhancer() {
-        return new CustomTokenEnhancer();
-    }
 
 //    @Bean
 //    @Primary
@@ -121,6 +101,18 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
 //        defaultTokenServices.setTokenStore(tokenStore());
 //        defaultTokenServices.setSupportRefreshToken(true);
 //        return defaultTokenServices;
+//    }
+
+
+//    @Bean
+//    RedisTokenStore redisTokenStore(){
+//        return new RedisTokenStore(redisConnectionFactory);
+//    }
+
+    //token存储数据库
+//    @Bean
+//    public JdbcTokenStore jdbcTokenStore(){
+//        return new JdbcTokenStore(dataSource);
 //    }
 
 }

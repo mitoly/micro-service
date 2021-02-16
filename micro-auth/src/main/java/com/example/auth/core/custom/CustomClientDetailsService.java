@@ -10,6 +10,7 @@ import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,6 +34,7 @@ public class CustomClientDetailsService implements ClientDetailsService {
             details.setClientSecret(clientDetail.getClientSecret());
             details.setAuthorizedGrantTypes(Arrays.asList(clientDetail.getAuthorizedGrantTypes(), "refresh_token")); // 配置认证模式
             details.setScope(Arrays.asList(clientDetail.getScope())); // 配置scope 常用 read write trust 等
+            details.setRegisteredRedirectUri(Collections.singleton(clientDetail.getWebServerRedirectUri())); // 重定向路径，授权码模式获取授权码
             if (clientDetail.getAutoApprove()) { // 是否自动授权，授权模式采用
                 details.setAutoApproveScopes(Arrays.asList(clientDetail.getScope()));
             }
