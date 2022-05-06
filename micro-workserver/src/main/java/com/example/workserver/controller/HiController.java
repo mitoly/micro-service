@@ -1,5 +1,6 @@
 package com.example.workserver.controller;
 
+import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 
 @RestController
@@ -37,10 +40,14 @@ public class HiController {
     //获取当前“Token”用户信息
     @GetMapping("/getPrinciple")
     public OAuth2Authentication getPrinciple(OAuth2Authentication oAuth2Authentication, Principal principal,
-                                             Authentication authentication){
+                                             Authentication authentication, HttpServletRequest request){
         // 通过上下文获得用户数据
 //        SecurityContext context = SecurityContextHolder.getContext();
-
+        // 获取并解析token中的内容
+        String header = request.getHeader("Authorization");
+        String token = header.substring(header.indexOf("bearer") + 8);
+        String tokenData = Jwts.parser().setSigningKey("key".getBytes(StandardCharsets.UTF_8)).parseClaimsJws(token).getBody().toString();
+        System.out.println(tokenData);
         logger.info(oAuth2Authentication.getUserAuthentication().getAuthorities().toString());
         logger.info(oAuth2Authentication.toString());
         logger.info("principal.toString()"+principal.toString());

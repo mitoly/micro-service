@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -41,19 +42,20 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeRequests()
+        http
+                .authorizeRequests().anyRequest().permitAll()
 //                .antMatchers("/user/**").permitAll()
 //                .antMatchers("/test/hi").hasAnyRole("USER") // 需要角色USER
 //                .antMatchers("/test/hello").hasAnyRole("ADMIN")
 //                .antMatchers("/test/getPrinciple").permitAll()
 //                .and()
 //                .authorizeRequests().anyRequest().authenticated()
-//                .and()
+                .and()
+                .addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 //                .addFilterBefore(corsFilter(), ChannelProcessingFilter.class);
         http.csrf().disable();
         // 自定义权限访问
-        http.authorizeRequests().anyRequest().access("@customAccess.hasPermission(request, authentication)");
+//        http.authorizeRequests().anyRequest().access("@customAccess.hasPermission(request, authentication)");
     }
 
     @Bean
